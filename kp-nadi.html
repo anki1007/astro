@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<script src="theme.js?v=2" data-src-light></script>
+<script src="theme.js?v=4" data-src-light></script>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>KP Nakshatra Nadi Table: Planet, Star, Sub &amp; Sub-Sub Lord</title>
@@ -60,7 +60,7 @@
   tbody tr:nth-child(even){background:rgba(127,127,127,.05)}
   td.t{font-weight:600;border-left:4px solid transparent}
   tr.mark td.t{border-left-color:var(--accent)}
-  td.pct{text-align:center;font-weight:800;color:#1b2430}
+  td.pct{text-align:center;font-weight:800;color:#1b2430}td.pct.pt-keep{color:#1b2430}
   td.hora{font-weight:700}
   td.asp,td.nadi{white-space:normal}
   .count{color:var(--muted);font-size:12.5px}
@@ -159,7 +159,7 @@
           <option value="Rahu">Rahu</option><option value="Ketu">Ketu</option>
         </select>
       </div>
-      <div class="field"><label>Date</label><input type="date" id="date" value="2026-09-21"></div>
+      <div class="field"><label>Date</label><input type="date" id="date" value="2026-09-21"><script>/* default to today (system date) */(function(){var d=new Date(),p=function(n){return(n<10?"0":"")+n};document.getElementById("date").value=d.getFullYear()+"-"+p(d.getMonth()+1)+"-"+p(d.getDate())})();</script></div>
       <div class="field"><label>Table Interval</label>
         <select id="interval">
           <option value="5" selected>Every 5 minutes</option>
@@ -10710,7 +10710,7 @@ function render(){
     var mark = i > 0 && VIEW[i-1].nadi !== r.nadi;
     return '<tr class="' + (mark?'mark':'') + '">'
       + '<td class="t">' + r.time + '</td>'
-      + '<td class="pct" style="background:' + shade(r.pct) + '">' + r.pct + '%</td>'
+      + '<td class="pct pt-keep" style="background:' + shade(r.pct) + '">' + r.pct + '%</td>'
       + '<td class="hora">' + r.hora + '</td>'
       + '<td class="asp">' + (r.asp || '—') + '</td>'
       + '<td class="nadi">' + r.nadi + '</td></tr>';

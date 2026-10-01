@@ -1,4 +1,4 @@
-/* Theme layer — remaps the original dark palette to Navy (#005B99, default) or Light (#FFF5EE).
+/* Theme layer — remaps the original dark palette to Navy (#003366, default) or Light (#FFF5EE).
    Runs before any other script: rewrites stylesheet values, inline styles, SVG paint and canvas colours.
    Add data-src-light on the <script> tag for pages whose source palette is light. */
 (function(){
@@ -20,16 +20,16 @@
   if(SRC_LIGHT&&neutral)l=1-l;
   if(neutral){
    if(l<.28){ /* surfaces: page, panels, borders */
-    if(mode==="navy")return hsl2rgb(204,l<.12?1:.75,clamp(.30+(l-.05)*.6,.26,.46));
+    if(mode==="navy")return hsl2rgb(210,l<.12?1:.7,clamp(.20+(l-.05)*.6,.17,.36));
     return hsl2rgb(25,l<.12?1:.55,clamp(.967-(l-.05)*.5,.80,.975));
    }
-   /* text and muted text */
-   if(mode==="navy")return hsl2rgb(204,.45,clamp(.72+(l-.28)*.45,.72,.99));
-   return hsl2rgb(215,.35,clamp(.45-(l-.28)*.55,.08,.45));
+   /* text and muted text — kept high-contrast against the surface */
+   if(mode==="navy")return hsl2rgb(210,.3,clamp(.82+(l-.28)*.35,.82,1));
+   return hsl2rgb(215,.45,clamp(.30-(l-.28)*.45,.04,.30));
   }
   /* accents: keep hue, keep them readable on the new surface */
-  if(mode==="navy")return hsl2rgb(h,s,Math.max(l,.62));
-  return hsl2rgb(h,Math.min(1,s),Math.min(l,.40));
+  if(mode==="navy")return hsl2rgb(h,s,Math.max(l,.68));
+  return hsl2rgb(h,Math.min(1,s),Math.min(l,.34));
  }
 
  var cache=new Map();
@@ -53,7 +53,7 @@
  /* stylesheets via CSSOM — only declaration values, never selectors */
  var done=new WeakSet();
  function fixRules(rules){for(var i=0;i<rules.length;i++){var r=rules[i];
-  if(r.style)for(var j=0;j<r.style.length;j++){var p=r.style[j],v=r.style.getPropertyValue(p),nv=mapValue(v);if(nv!==v)r.style.setProperty(p,nv,r.style.getPropertyPriority(p))}
+  if(r.style&&!(r.selectorText&&r.selectorText.indexOf(".pt-keep")>=0))for(var j=0;j<r.style.length;j++){var p=r.style[j],v=r.style.getPropertyValue(p),nv=mapValue(v);if(nv!==v)r.style.setProperty(p,nv,r.style.getPropertyPriority(p))}
   if(r.cssRules)fixRules(r.cssRules)}}
  function fixSheet(sh){if(!sh||done.has(sh))return;try{fixRules(sh.cssRules);done.add(sh)}catch(e){}}
  function fixSheets(){for(var i=0;i<d.styleSheets.length;i++)fixSheet(d.styleSheets[i])}
@@ -65,7 +65,7 @@
  function fixAttr(el,name){var v=el.getAttribute(name);if(!v)return;var memo=wrote.get(el);if(memo&&memo[name]===v)return;
   var nv=mapValue(v);if(!memo){memo={};wrote.set(el,memo)}memo[name]=nv;if(nv!==v)el.setAttribute(name,nv)}
  function fixEl(el){
-  if(el.nodeType!==1)return;
+  if(el.nodeType!==1||(el.classList&&el.classList.contains("pt-keep")))return;
   fixAttr(el,"style");
   for(var i=0;i<ATTRS.length;i++)fixAttr(el,ATTRS[i]);
   if(el.tagName==="STYLE"&&el.sheet)fixSheet(el.sheet);
@@ -80,7 +80,7 @@
 
  /* meta tags */
  function fixMeta(){var cs=d.querySelector('meta[name="color-scheme"]');if(cs)cs.content=mode==="light"?"light":"dark";
-  var tc=d.querySelector('meta[name="theme-color"]');if(tc)tc.content=mode==="light"?"#FFF5EE":"#005B99"}
+  var tc=d.querySelector('meta[name="theme-color"]');if(tc)tc.content=mode==="light"?"#FFF5EE":"#003366"}
 
  /* switcher */
  function setTheme(m){try{localStorage.setItem(KEY,m)}catch(e){}location.reload()}
